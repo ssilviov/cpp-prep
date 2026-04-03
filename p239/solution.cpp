@@ -78,23 +78,29 @@ public:
     return res;
   } 
 
-  vector<int> maxSlidingWindowQueue(vector<int>& nums, int k) {
+  vector<int> maxSlidingWindowQueue(vector<int>& nums, unsigned int k) {
     vector<int> res;
-    auto q = deque<int>();
-    auto last = nums[0];
-    q.push_back(last);
+    auto q = deque<unsigned int>();
 
-    for (auto i = 1U; i < nums.size(); ++i) {
-      if (i >= k)  {
-	res.push_back(q.front());
-	if (nums[i] - k == q.front()) {
-	    q.pop_front();
-	}
+    for (auto i = 0U; i < nums.size(); ++i) {
+      // Remove out of window indexes.
+      while (!q.empty() && q.front() == i - k) {
+	q.pop_front();
       }
-      while (!q.empty() && q.back() < nums[i]) q.pop_back();
-      q.push_back(nums[i]);
+
+      // Remove indexes for values less than current.
+      while (!q.empty() && nums[q.back()] < nums[i]) {
+	q.pop_back();
+      }
+
+      // add current index to the queue.
+      q.push_back(i);
+
+      // if we are after k, add the max to the result.
+      if (i >= k - 1)  {
+	res.push_back(nums[q.front()]);
+      }
     }
-    res.push_back(q.front());
     return res;
   }
 
